@@ -1,0 +1,11 @@
+# .npmignore
+src/
+tests/
+tsconfig.json
+.env
+.env.*
+.gitignore
+*.test.ts
+*.spec.ts
+node_modules/
+.github/
