@@ -8,7 +8,7 @@ Validate, type, and protect your env vars at boot time — before your app crash
 
 [![npm version](https://img.shields.io/npm/v/env-castle.svg)](https://www.npmjs.com/package/env-castle)
 [![npm downloads](https://img.shields.io/npm/dm/env-castle.svg)](https://www.npmjs.com/package/env-castle)
-[![license](https://img.shields.io/npm/l/env-castle.svg)](https://github.com/seu-user/env-castle/blob/main/LICENSE)
+[![license](https://img.shields.io/npm/l/env-castle.svg)](https://github.com/wallacefrota/env-castle/blob/main/LICENSE)
 
 ✅ Zero dependencies • ✅ Perfect TypeScript inference • ✅ Beautiful errors • ✅ All errors at once • ✅ Built-in `.env` loader
 
