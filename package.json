@@ -10,7 +10,7 @@
   "author": "Wallace Frota",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "tsup src/index.ts --format cjs --dts",
     "test": "tsx --test tests/**/*.test.ts",
     "prepublishOnly": "npm run build",
     "clean": "rm -rf dist"
@@ -33,6 +33,7 @@
     "eslint": "^10.0.3",
     "globals": "^17.4.0",
     "jiti": "^2.6.1",
+    "tsup": "^8.5.1",
     "tsx": "^4.16.0",
     "typescript": "^5.5.0",
     "typescript-eslint": "^8.57.1"
