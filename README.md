@@ -892,6 +892,6 @@ npm run build
 
 # 📄 License
 
-Published under the [MIT](https://github.com/wallcefrota/env-castle/blob/main/LICENSE) license. Made by [Wallace Frota](https://github.com/wallcefrota)
+Published under the [MIT](https://github.com/wallacefrota/env-castle/blob/main/LICENSE) license. Made by [Wallace Frota](https://github.com/wallacefrota)
 
 ---
