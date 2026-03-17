@@ -498,7 +498,9 @@ Validates IPv4 or IPv6 addresses.
 ---
 
 ## path
+
 Validates file system paths with optional existence check.
+
 ```ts
 {
   LOG_DIR:    { type: 'path', default: './logs' },
@@ -507,13 +509,17 @@ Validates file system paths with optional existence check.
 }
 // → string
 ```
-| Option  | Type  | Description                     |
-| ------- | ----- | ------------------------------- |
+
+| Option    | Type    | Description                        |
+| --------- | ------- | ---------------------------------- |
 | mustExist | boolean | Check if path exists on filesystem |
+
 ---
 
 ## regex
+
 Validates against a custom regular expression pattern.
+
 ```ts
 {
   APP_VERSION: { type: 'regex', required: true, pattern: /^\d+\.\d+\.\d+$/ },
@@ -522,49 +528,52 @@ Validates against a custom regular expression pattern.
 }
 // → string
 ```
-| Option  | Type  | Description                     |
-| ------- | ----- | ------------------------------- |
+
+| Option  | Type   | Description                       |
+| ------- | ------ | --------------------------------- |
 | pattern | RegExp | Required. Must match this pattern |
+
 ---
 
 📋 All Types at a Glance
 
-| Type      | Coerces to | Example Input   | Example Output | Extra Options                |
-|-----------|------------|-----------------|----------------|------------------------------|
-| string    | string     | "hello"         | "hello"        | minLength, maxLength, pattern |
-| number    | number     | "3.14"          | 3.14           | min, max                     |
-| integer   | number     | "42"            | 42             | min, max                     |
-| float     | number     | "3.14"          | 3.14           | min, max                     |
-| boolean   | boolean    | "true"          | true           | —                            |
-| port      | number     | "3000"          | 3000           | —                            |
-| url       | string     | "https://..."   | "https://..."  | protocols                    |
-| email     | string     | "A@B.COM"       | "a@b.com"      | —                            |
-| host      | string     | "localhost"     | "localhost"    | —                            |
-| json      | any        | '{"a":1}'       | { a: 1 }       | —                            |
-| list      | string[]   | "a,b,c"         | ['a','b','c']  | separator, itemType           |
-| enum      | literal    | "prod"          | "prod"         | values                       |
-| duration  | number     | "30s"           | 30000          | min, max                     |
-| ip        | string     | "1.2.3.4"       | "1.2.3.4"      | version                      |
-| path      | string     | "./logs"        | "./logs"       | mustExist                    |
-| regex     | string     | "ABC-123"       | "ABC-123"      | pattern                      |
-
+| Type     | Coerces to | Example Input | Example Output | Extra Options                 |
+| -------- | ---------- | ------------- | -------------- | ----------------------------- |
+| string   | string     | "hello"       | "hello"        | minLength, maxLength, pattern |
+| number   | number     | "3.14"        | 3.14           | min, max                      |
+| integer  | number     | "42"          | 42             | min, max                      |
+| float    | number     | "3.14"        | 3.14           | min, max                      |
+| boolean  | boolean    | "true"        | true           | —                             |
+| port     | number     | "3000"        | 3000           | —                             |
+| url      | string     | "https://..." | "https://..."  | protocols                     |
+| email    | string     | "A@B.COM"     | "a@b.com"      | —                             |
+| host     | string     | "localhost"   | "localhost"    | —                             |
+| json     | any        | '{"a":1}'     | { a: 1 }       | —                             |
+| list     | string[]   | "a,b,c"       | ['a','b','c']  | separator, itemType           |
+| enum     | literal    | "prod"        | "prod"         | values                        |
+| duration | number     | "30s"         | 30000          | min, max                      |
+| ip       | string     | "1.2.3.4"     | "1.2.3.4"      | version                       |
+| path     | string     | "./logs"      | "./logs"       | mustExist                     |
+| regex    | string     | "ABC-123"     | "ABC-123"      | pattern                       |
 
 # ⚙️ Options
+
 All options for env() / envSafe():
+
 ```ts
 env(schema, {
   // Path to .env file(s)
-  path: '.env',
+  path: ".env",
   // path: ['.env', '.env.local'],
 
   // Override process.env with .env file values (default: false)
   override: false,
 
   // Custom env source — useful for testing
-  source: { PORT: '3000', DEBUG: 'true' },
+  source: { PORT: "3000", DEBUG: "true" },
 
   // Only read vars with this prefix
-  prefix: 'APP_',
+  prefix: "APP_",
 
   // Remove prefix from result keys (default: false)
   stripPrefix: false,
@@ -572,7 +581,7 @@ env(schema, {
   // Call process.exit(1) on error (default: true)
   // Use envSafe() for exitOnError: false
   exitOnError: true,
-})
+});
 ```
 
 ---
@@ -586,9 +595,9 @@ Shows every problem instead of failing on the first one.
 ## 🔒 Immutable Config
 
 ```ts
-const config = env({ PORT: { type: 'port', default: 3000 } })
+const config = env({ PORT: { type: "port", default: 3000 } });
 
-config.PORT = 9999 // ❌ TypeError: Cannot assign to read only property
+config.PORT = 9999; // ❌ TypeError: Cannot assign to read only property
 ```
 
 ## 🔐 Sensitive Value Masking
@@ -599,35 +608,39 @@ DB_PASSWORD → "my****rd"
 ```
 
 ## 📝 Descriptions
+
 Add desc to help teammates understand where to find values:
+
 ```ts
 const config = env({
   STRIPE_KEY: {
-    type: 'string',
+    type: "string",
     required: true,
-    desc: 'Get it from https://dashboard.stripe.com/apikeys',
+    desc: "Get it from https://dashboard.stripe.com/apikeys",
   },
   SENDGRID_KEY: {
-    type: 'string',
+    type: "string",
     required: true,
-    desc: 'Settings → API Keys in SendGrid dashboard',
+    desc: "Settings → API Keys in SendGrid dashboard",
   },
-})
+});
 ```
 
 ---
 
 # 🔤 TypeScript Inference
+
 Full type inference without manual type definitions:
+
 ```ts
 const config = env({
-  PORT:     { type: 'port', default: 3000 },
-  DEBUG:    { type: 'boolean', default: false },
-  NODE_ENV: { type: 'enum', values: ['dev', 'prod'] as const, default: 'dev' },
-  TAGS:     { type: 'list', default: [] },
-  TIMEOUT:  { type: 'duration', default: '30s' },
-  METADATA: { type: 'json', default: {} },
-})
+  PORT: { type: "port", default: 3000 },
+  DEBUG: { type: "boolean", default: false },
+  NODE_ENV: { type: "enum", values: ["dev", "prod"] as const, default: "dev" },
+  TAGS: { type: "list", default: [] },
+  TIMEOUT: { type: "duration", default: "30s" },
+  METADATA: { type: "json", default: {} },
+});
 
 // TypeScript knows:
 // config.PORT     → number
@@ -641,6 +654,7 @@ const config = env({
 ---
 
 # 📦 Built-in `.env` Parser
+
 No need for dotenv. Built-in parser supports:
 
 Supports:
@@ -689,95 +703,125 @@ EMPTY=
 
 ```ts
 // src/config.ts
-import { env, envGroup } from 'env-castle'
+import { env, envGroup } from "env-castle";
 
-export const config = env({
-  NODE_ENV: {
-    type: 'enum',
-    values: ['development', 'production', 'test'] as const,
-    default: 'development',
+export const config = env(
+  {
+    NODE_ENV: {
+      type: "enum",
+      values: ["development", "production", "test"] as const,
+      default: "development",
+    },
+    PORT: { type: "port", default: 3000 },
+    LOG_LEVEL: {
+      type: "enum",
+      values: ["debug", "info", "warn", "error"] as const,
+      default: "info",
+    },
+    CORS_ORIGINS: { type: "list", default: ["http://localhost:3000"] },
+    REQUEST_TIMEOUT: { type: "duration", default: "30s" },
   },
-  PORT:      { type: 'port', default: 3000 },
-  LOG_LEVEL: {
-    type: 'enum',
-    values: ['debug', 'info', 'warn', 'error'] as const,
-    default: 'info',
+  { path: ".env" },
+);
+
+export const db = envGroup("DB_", {
+  HOST: { type: "host", default: "localhost" },
+  PORT: { type: "port", default: 5432 },
+  NAME: { type: "string", required: true },
+  USER: { type: "string", required: true },
+  PASSWORD: { type: "string", required: true },
+  SSL: { type: "boolean", default: false },
+  POOL_SIZE: { type: "integer", default: 10, min: 1, max: 100 },
+});
+
+export const jwt = envGroup("JWT_", {
+  SECRET: {
+    type: "string",
+    required: true,
+    minLength: 32,
+    desc: "Min 32 chars. Generate with: openssl rand -hex 32",
   },
-  CORS_ORIGINS: { type: 'list', default: ['http://localhost:3000'] },
-  REQUEST_TIMEOUT: { type: 'duration', default: '30s' },
-}, { path: '.env' })
-
-export const db = envGroup('DB_', {
-  HOST:     { type: 'host', default: 'localhost' },
-  PORT:     { type: 'port', default: 5432 },
-  NAME:     { type: 'string', required: true },
-  USER:     { type: 'string', required: true },
-  PASSWORD: { type: 'string', required: true },
-  SSL:      { type: 'boolean', default: false },
-  POOL_SIZE: { type: 'integer', default: 10, min: 1, max: 100 },
-})
-
-export const jwt = envGroup('JWT_', {
-  SECRET:      { type: 'string', required: true, minLength: 32, desc: 'Min 32 chars. Generate with: openssl rand -hex 32' },
-  EXPIRES_IN:  { type: 'duration', default: '7d' },
-  REFRESH_TTL: { type: 'duration', default: '30d' },
+  EXPIRES_IN: { type: "duration", default: "7d" },
+  REFRESH_TTL: { type: "duration", default: "30d" },
 });
 
 // src/app.ts
-import express from 'express'
-import cors from 'cors'
-import { config, db, jwt } from './config'
+import express from "express";
+import cors from "cors";
+import { config, db, jwt } from "./config";
 
-const app = express()
+const app = express();
 
-app.use(cors({ origin: config.CORS_ORIGINS }))
+app.use(cors({ origin: config.CORS_ORIGINS }));
 
 app.listen(config.PORT, () => {
-  console.log(`🚀 Server running on port ${config.PORT}`)
-  console.log(`📦 Environment: ${config.NODE_ENV}`)
-  console.log(`🗄️  Database: ${db.HOST}:${db.PORT}/${db.NAME}`)
-  console.log(`🔑 JWT expires in: ${jwt.EXPIRES_IN}ms`)
-})
+  console.log(`🚀 Server running on port ${config.PORT}`);
+  console.log(`📦 Environment: ${config.NODE_ENV}`);
+  console.log(`🗄️  Database: ${db.HOST}:${db.PORT}/${db.NAME}`);
+  console.log(`🔑 JWT expires in: ${jwt.EXPIRES_IN}ms`);
+});
 ```
 
 ## Microservice with External APIs
+
 ```ts
 // src/config.ts
-import { env, envGroup } from 'env-castle'
+import { env, envGroup } from "env-castle";
 
-const config = env({
-  SERVICE_NAME:    { type: 'string', default: 'payment-service' },
-  PORT:            { type: 'port', default: 3000 },
-  NODE_ENV:        { type: 'enum', values: ['development', 'staging', 'production'] as const, default: 'development' },
-  REQUEST_TIMEOUT: { type: 'duration', default: '10s', min: '1s', max: '2m' },
-  MAX_RETRIES:     { type: 'integer', default: 3, min: 0, max: 10 },
-  ALLOWED_IPS:     { type: 'list', default: [] },
-  FEATURE_FLAGS:   { type: 'json', default: {} },
-}, {
-  path: ['.env', '.env.local'],
-})
+const config = env(
+  {
+    SERVICE_NAME: { type: "string", default: "payment-service" },
+    PORT: { type: "port", default: 3000 },
+    NODE_ENV: {
+      type: "enum",
+      values: ["development", "staging", "production"] as const,
+      default: "development",
+    },
+    REQUEST_TIMEOUT: { type: "duration", default: "10s", min: "1s", max: "2m" },
+    MAX_RETRIES: { type: "integer", default: 3, min: 0, max: 10 },
+    ALLOWED_IPS: { type: "list", default: [] },
+    FEATURE_FLAGS: { type: "json", default: {} },
+  },
+  {
+    path: [".env", ".env.local"],
+  },
+);
 
-const stripe = envGroup('STRIPE_', {
-  SECRET_KEY:     { type: 'string', required: true, minLength: 20, desc: 'https://dashboard.stripe.com/apikeys' },
-  WEBHOOK_SECRET: { type: 'string', required: true, desc: 'https://dashboard.stripe.com/webhooks' },
-  API_VERSION:    { type: 'regex', default: '2024-01-01', pattern: /^\d{4}-\d{2}-\d{2}$/ },
-})
+const stripe = envGroup("STRIPE_", {
+  SECRET_KEY: {
+    type: "string",
+    required: true,
+    minLength: 20,
+    desc: "https://dashboard.stripe.com/apikeys",
+  },
+  WEBHOOK_SECRET: {
+    type: "string",
+    required: true,
+    desc: "https://dashboard.stripe.com/webhooks",
+  },
+  API_VERSION: {
+    type: "regex",
+    default: "2024-01-01",
+    pattern: /^\d{4}-\d{2}-\d{2}$/,
+  },
+});
 
-const redis = envGroup('REDIS_', {
-  URL: { type: 'url', required: true, protocols: ['redis', 'rediss'] },
-  TTL: { type: 'duration', default: '5m' },
-})
+const redis = envGroup("REDIS_", {
+  URL: { type: "url", required: true, protocols: ["redis", "rediss"] },
+  TTL: { type: "duration", default: "5m" },
+});
 
-const email = envGroup('SMTP_', {
-  HOST: { type: 'host', required: true },
-  PORT: { type: 'port', default: 587 },
-  USER: { type: 'email', required: true },
-  PASS: { type: 'string', required: true },
-  FROM: { type: 'email', required: true },
-})
+const email = envGroup("SMTP_", {
+  HOST: { type: "host", required: true },
+  PORT: { type: "port", default: 587 },
+  USER: { type: "email", required: true },
+  PASS: { type: "string", required: true },
+  FROM: { type: "email", required: true },
+});
 
-export { config, stripe, redis, email }
+export { config, stripe, redis, email };
 ```
+
 ---
 
 # 📊 Comparison
@@ -801,7 +845,9 @@ export { config, stripe, redis, email }
 # 📚 API Reference
 
 ## env(schema, options?)
+
 Validates process.env against schema. Exits process on failure (production-safe).
+
 ```ts
 const config = env({
   PORT: { type: "port", default: 3000 },
@@ -813,45 +859,55 @@ Returns: Frozen, fully-typed config object.
 ---
 
 ## envSafe(schema, options?)
+
 Same as env() but throws EnvValidationError instead of calling process.exit.
+
 ```ts
 const config = envSafe({
-  PORT: { type: 'port', default: 3000 },
-})
+  PORT: { type: "port", default: 3000 },
+});
 ```
+
 Returns: Frozen, fully-typed config object.
 Throws: `EnvValidationError` instead of exiting.
 
 ---
 
 ## envGroup(prefix, schema)
+
 Reads prefixed variables and returns clean keys without the prefix.
+
 ```ts
-const db = envGroup('DB_', {
-  HOST: { type: 'host', default: 'localhost' },
-  PORT: { type: 'port', default: 5432 },
-})
+const db = envGroup("DB_", {
+  HOST: { type: "host", default: "localhost" },
+  PORT: { type: "port", default: 5432 },
+});
 
 // Reads DB_HOST, DB_PORT
 // Returns { HOST: '...', PORT: 5432 }
 ```
+
 Returns: Frozen, fully-typed config object.
 
 ---
 
 ## envVar(key, rule)
+
 Validates a single environment variable.
 
 ```ts
 const port = envVar("PORT", { type: "port", default: 3000 });
 ```
+
 Returns: Coerced value.
 Throws: EnvValidationError
 
 ---
 
 # EnvValidationError
+
 Error class thrown when validation fails.
+
 ```ts
 import { EnvValidationError } from 'env-castle'
 
