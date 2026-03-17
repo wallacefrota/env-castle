@@ -726,7 +726,7 @@ export const jwt = envGroup('JWT_', {
 // src/app.ts
 import express from 'express'
 import cors from 'cors'
-import { config, db, jwt } from './config.js'
+import { config, db, jwt } from './config'
 
 const app = express()
 
@@ -836,6 +836,7 @@ const db = envGroup('DB_', {
 // Returns { HOST: '...', PORT: 5432 }
 ```
 Returns: Frozen, fully-typed config object.
+
 ---
 
 ## envVar(key, rule)
@@ -846,6 +847,7 @@ const port = envVar("PORT", { type: "port", default: 3000 });
 ```
 Returns: Coerced value.
 Throws: EnvValidationError
+
 ---
 
 # EnvValidationError
