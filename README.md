@@ -127,16 +127,26 @@ const config = env(
 );
 ```
 
-Multiple files:
+* Multiple files:
 
 ```ts
+const base = env({
+  NODE_ENV: {
+    type: "enum",
+    values: ["development", "production"] as const,
+    default: "development",
+  },
+}, {
+  path: ".env"
+});
+
 const config = env(
   {
     PORT: { type: "port", default: 3000 },
   },
   {
-    path: [".env", ".env.local", `.env.${process.env.NODE_ENV}`],
-    override: true,
+    path: [".env", `.env.${base.NODE_ENV}`],
+    override: true, // ← The second file overwrites keys from the first.
   },
 );
 ```
@@ -227,12 +237,18 @@ try {
 # Custom Source (Testing)
 
 ```ts
-import { envSafe } from "env-castle";
+import { env } from "env-castle";
 
-const config = envSafe(
+// Source WITHOUT → reads from process.env (default behavior)
+const configuration = env({
+  PORT: { type: "port", default: 3000 },
+});
+// Read process.env.PORT
+
+// WITH source → reads the object you passed
+const configuration = env(
   {
     PORT: { type: "port", default: 3000 },
-    DEBUG: { type: "boolean", default: false },
   },
   {
     source: {
@@ -241,9 +257,11 @@ const config = envSafe(
     },
   },
 );
+// Ignores process.env completely
+// Reads ONLY from the source object
 
-config.PORT; // 8080
-config.DEBUG; // true
+configuration.PORT; // 8080
+configuration.DEBUG; // true
 ```
 
 ---
