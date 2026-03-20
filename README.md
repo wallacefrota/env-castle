@@ -20,7 +20,7 @@ Validate, type, and protect your env vars at boot time — before your app crash
 
 Every Node.js app uses environment variables. But without validation:
 
-```ts
+```js
 // 💀 Your app in production at 3am
 const port = process.env.PORT; // undefined → crash
 const debug = process.env.DEBUG; // "true" → still a string, not boolean
@@ -31,7 +31,7 @@ const dbUrl = process.env.DATABASE_URL; // typo in .env → silent undefined →
 
 env-castle fixes all of this in one line:
 
-```ts
+```js
 import { env } from "env-castle";
 
 const config = env({
@@ -51,16 +51,16 @@ config.DATABASE_URL; // string (validated URL)
 
 If anything is wrong, you see this at boot time:
 
-```
+```bash
 ╔══════════════════════════════════════════════════════╗
 ║ ❌ ENV VALIDATION FAILED                             ║
 ╠══════════════════════════════════════════════════════╣
 ║ DATABASE_URL → missing (required)                    ║
-║ ℹ PostgreSQL connection string                      ║
-║ PORT → "abc" is not a valid port (0-65535)          ║
-║ API_TIMEOUT → "never" is not a valid duration       ║
+║ ℹ PostgreSQL connection string                       ║
+║ PORT → "abc" is not a valid port (0-65535)           ║
+║ API_TIMEOUT → "never" is not a valid duration        ║
 ╠══════════════════════════════════════════════════════╣
-║ 3 errors found. Fix your environment variables.     ║
+║ 3 errors found. Fix your environment variables.      ║
 ╚══════════════════════════════════════════════════════╝
 ```
 
@@ -88,7 +88,7 @@ bun add env-castle
 
 ## Basic Usage
 
-```ts
+```js
 import { env } from "env-castle";
 
 const config = env({
@@ -116,7 +116,7 @@ config.DEBUG;
 
 # With `.env` File
 
-```ts
+```js
 const config = env(
   {
     PORT: { type: "port", default: 3000 },
@@ -127,18 +127,21 @@ const config = env(
 );
 ```
 
-* Multiple files:
+- Multiple files:
 
-```ts
-const base = env({
-  NODE_ENV: {
-    type: "enum",
-    values: ["development", "production"] as const,
-    default: "development",
+```js
+const base = env(
+  {
+    NODE_ENV: {
+      type: "enum",
+      values: ["development", "production"] as const,
+      default: "development",
+    },
   },
-}, {
-  path: ".env"
-});
+  {
+    path: ".env",
+  },
+);
 
 const config = env(
   {
@@ -155,7 +158,7 @@ const config = env(
 
 # Grouped Variables (Prefix)
 
-```ts
+```js
 import { envGroup } from "env-castle";
 
 // Reads: DB_HOST, DB_PORT, DB_NAME, DB_PASSWORD, DB_SSL
@@ -196,7 +199,7 @@ const aws = envGroup("AWS_", {
 
 # Single Variable
 
-```ts
+```js
 import { envVar } from "env-castle";
 
 const port = envVar("PORT", { type: "port", default: 3000 });
@@ -214,7 +217,7 @@ const secret = envVar("JWT_SECRET", {
 
 # Safe Mode (No process.exit)
 
-```ts
+```js
 import { envSafe, EnvValidationError } from "env-castle";
 
 try {
@@ -236,7 +239,7 @@ try {
 
 # Custom Source (Testing)
 
-```ts
+```js
 import { env } from "env-castle";
 
 // Source WITHOUT → reads from process.env (default behavior)
@@ -272,7 +275,7 @@ configuration.DEBUG; // true
 
 Basic string with optional constraints.
 
-```ts
+```js
 {
   APP_NAME: { type: 'string', default: 'my-app' },
   API_KEY:  { type: 'string', required: true, minLength: 10 },
@@ -294,7 +297,7 @@ Basic string with optional constraints.
 
 Numeric values with optional range validation.
 
-```ts
+```js
 {
   WORKERS:     { type: 'integer', default: 4, min: 1, max: 32 },
   RATE:        { type: 'float', required: true, min: 0, max: 1 },
@@ -329,7 +332,7 @@ Truthy / Falsy values supported:
 | yes    | no    |
 | on     | off   |
 
-```ts
+```js
 {
   DEBUG:   { type: 'boolean', default: false },
   VERBOSE: { type: 'boolean', default: false },
@@ -343,7 +346,7 @@ Truthy / Falsy values supported:
 
 Validates port range 0-65535 and coerces to number.
 
-```ts
+```js
 {
   PORT:       { type: 'port', default: 3000 },
   HTTPS_PORT: { type: 'port', default: 443 },
@@ -360,7 +363,7 @@ Validates port range 0-65535 and coerces to number.
 
 Validates URL format with optional protocol restriction.
 
-```ts
+```js
 {
   API_URL:      { type: 'url', required: true },
   DATABASE_URL: { type: 'url', required: true, protocols: ['postgres', 'postgresql'] },
@@ -378,7 +381,7 @@ Validates URL format with optional protocol restriction.
 
 Validates email format. Automatically lowercased and trimmed.
 
-```ts
+```js
 {
   ADMIN_EMAIL:   { type: 'email', required: true },
   SUPPORT_EMAIL: { type: 'email', default: 'support@example.com' },
@@ -393,7 +396,7 @@ Validates email format. Automatically lowercased and trimmed.
 
 Validates hostname or IP address.
 
-```ts
+```js
 {
   DB_HOST:    { type: 'host', default: 'localhost' },
   CACHE_HOST: { type: 'host', required: true },
@@ -411,7 +414,7 @@ Validates hostname or IP address.
 
 Type-safe enum values with literal type inference.
 
-```ts
+```js
 {
   NODE_ENV: {
     type: 'enum',
@@ -434,7 +437,7 @@ Type-safe enum values with literal type inference.
 
 Splits strings into typed arrays.
 
-```ts
+```js
 {
   ALLOWED_ORIGINS: { type: 'list', default: ['http://localhost:3000'] },
   CORS_METHODS:    { type: 'list', separator: '|', default: ['GET', 'POST'] },
@@ -456,7 +459,7 @@ Splits strings into typed arrays.
 
 Parses human-readable durations to milliseconds. Perfect for timeouts, TTLs, intervals.
 
-```ts
+```js
 {
   API_TIMEOUT:     { type: 'duration', default: '30s' },
   CACHE_TTL:       { type: 'duration', default: '5m' },
@@ -485,7 +488,7 @@ Parses human-readable durations to milliseconds. Perfect for timeouts, TTLs, int
 
 Parses JSON strings into objects/arrays.
 
-```ts
+```js
 {
   FEATURE_FLAGS: { type: 'json', default: {} },
   SETTINGS:      { type: 'json', required: true },
@@ -500,7 +503,7 @@ Parses JSON strings into objects/arrays.
 
 Validates IPv4 or IPv6 addresses.
 
-```ts
+```js
 {
   BIND_ADDRESS: { type: 'ip', default: '0.0.0.0' },
   SERVER_IP:    { type: 'ip', version: 4, required: true },
@@ -519,7 +522,7 @@ Validates IPv4 or IPv6 addresses.
 
 Validates file system paths with optional existence check.
 
-```ts
+```js
 {
   LOG_DIR:    { type: 'path', default: './logs' },
   CERT_FILE:  { type: 'path', required: true, mustExist: true },
@@ -538,7 +541,7 @@ Validates file system paths with optional existence check.
 
 Validates against a custom regular expression pattern.
 
-```ts
+```js
 {
   APP_VERSION: { type: 'regex', required: true, pattern: /^\d+\.\d+\.\d+$/ },
   HEX_COLOR:  { type: 'regex', default: '#000000', pattern: /^#[0-9a-fA-F]{6}$/ },
@@ -578,7 +581,7 @@ Validates against a custom regular expression pattern.
 
 All options for env() / envSafe():
 
-```ts
+```js
 env(schema, {
   // Path to .env file(s)
   path: ".env",
@@ -612,7 +615,7 @@ Shows every problem instead of failing on the first one.
 
 ## 🔒 Immutable Config
 
-```ts
+```js
 const config = env({ PORT: { type: "port", default: 3000 } });
 
 config.PORT = 9999; // ❌ TypeError: Cannot assign to read only property
@@ -629,7 +632,7 @@ DB_PASSWORD → "my****rd"
 
 Add desc to help teammates understand where to find values:
 
-```ts
+```js
 const config = env({
   STRIPE_KEY: {
     type: "string",
@@ -650,7 +653,7 @@ const config = env({
 
 Full type inference without manual type definitions:
 
-```ts
+```js
 const config = env({
   PORT: { type: "port", default: 3000 },
   DEBUG: { type: "boolean", default: false },
@@ -719,7 +722,7 @@ EMPTY=
 
 ## Express / Fastify API
 
-```ts
+```js
 // src/config.ts
 import { env, envGroup } from "env-castle";
 
@@ -782,7 +785,7 @@ app.listen(config.PORT, () => {
 
 ## Microservice with External APIs
 
-```ts
+```js
 // src/config.ts
 import { env, envGroup } from "env-castle";
 
@@ -866,7 +869,7 @@ export { config, stripe, redis, email };
 
 Validates process.env against schema. Exits process on failure (production-safe).
 
-```ts
+```js
 const config = env({
   PORT: { type: "port", default: 3000 },
 });
@@ -880,7 +883,7 @@ Returns: Frozen, fully-typed config object.
 
 Same as env() but throws EnvValidationError instead of calling process.exit.
 
-```ts
+```js
 const config = envSafe({
   PORT: { type: "port", default: 3000 },
 });
@@ -895,7 +898,7 @@ Throws: `EnvValidationError` instead of exiting.
 
 Reads prefixed variables and returns clean keys without the prefix.
 
-```ts
+```js
 const db = envGroup("DB_", {
   HOST: { type: "host", default: "localhost" },
   PORT: { type: "port", default: 5432 },
@@ -913,7 +916,7 @@ Returns: Frozen, fully-typed config object.
 
 Validates a single environment variable.
 
-```ts
+```js
 const port = envVar("PORT", { type: "port", default: 3000 });
 ```
 
@@ -926,7 +929,7 @@ Throws: EnvValidationError
 
 Error class thrown when validation fails.
 
-```ts
+```js
 import { EnvValidationError } from 'env-castle'
 
 try {
