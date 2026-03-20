@@ -1,17 +1,29 @@
 {
   "name": "env-castle",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Bulletproof environment variable validation with perfect TypeScript inference, beautiful errors, and zero dependencies.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
   "files": [
     "dist"
   ],
   "author": "Wallace Frota",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsup src/index.ts --format cjs --dts",
-    "test": "tsx --test tests/**/*.test.ts",
+    "build": "tsup",
+    "test": "vitest run",
     "prepublishOnly": "npm run build",
     "clean": "rm -rf dist"
   },
@@ -36,7 +48,8 @@
     "tsup": "^8.5.1",
     "tsx": "^4.16.0",
     "typescript": "^5.5.0",
-    "typescript-eslint": "^8.57.1"
+    "typescript-eslint": "^8.57.1",
+    "vitest": "^4.1.0"
   },
   "engines": {
     "node": ">=18"
