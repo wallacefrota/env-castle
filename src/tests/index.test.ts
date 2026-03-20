@@ -1,5 +1,4 @@
-import { describe, it } from 'node:test'
-import assert from 'node:assert/strict'
+import { describe, it, expect } from 'vitest'
 import { envSafe, envGroup, envVar, EnvValidationError } from '../index'
 
 describe('env-castle', () => {
@@ -10,7 +9,7 @@ describe('env-castle', () => {
         NAME: { type: 'string', required: true }
       }, { source: { NAME: 'John' } })
 
-      assert.equal(config.NAME, 'John')
+      expect(config.NAME).toBe('John')
     })
 
     it('validates number', () => {
@@ -18,7 +17,7 @@ describe('env-castle', () => {
         COUNT: { type: 'number', required: true }
       }, { source: { COUNT: '42' } })
 
-      assert.equal(config.COUNT, 42)
+      expect(config.COUNT).toBe(42)
     })
 
     it('validates integer', () => {
@@ -26,13 +25,13 @@ describe('env-castle', () => {
         COUNT: { type: 'integer', required: true }
       }, { source: { COUNT: '42' } })
 
-      assert.equal(config.COUNT, 42)
+      expect(config.COUNT).toBe(42)
     })
 
     it('rejects float as integer', () => {
-      assert.throws(() => envSafe({
+      expect(() => envSafe({
         COUNT: { type: 'integer', required: true }
-      }, { source: { COUNT: '4.2' } }), EnvValidationError)
+      }, { source: { COUNT: '4.2' } })).toThrow(EnvValidationError)
     })
 
     it('validates float', () => {
@@ -40,7 +39,7 @@ describe('env-castle', () => {
         RATE: { type: 'float', required: true }
       }, { source: { RATE: '3.14' } })
 
-      assert.equal(Math.round(config.RATE * 100), 314)
+      expect(Math.round(config.RATE * 100)).toBe(314)
     })
 
     it('validates boolean - true values', () => {
@@ -50,7 +49,8 @@ describe('env-castle', () => {
         const config = envSafe({
           FLAG: { type: 'boolean', required: true }
         }, { source: { FLAG: val } })
-        assert.equal(config.FLAG, true, `"${val}" should be true`)
+
+        expect(config.FLAG).toBe(true);
       }
     })
 
@@ -61,14 +61,14 @@ describe('env-castle', () => {
         const config = envSafe({
           FLAG: { type: 'boolean', required: true }
         }, { source: { FLAG: val } })
-        assert.equal(config.FLAG, false, `"${val}" should be false`)
+        expect(config.FLAG).toBe(false)
       }
     })
 
     it('rejects invalid boolean', () => {
-      assert.throws(() => envSafe({
+      expect(() => envSafe({
         FLAG: { type: 'boolean', required: true }
-      }, { source: { FLAG: 'maybe' } }), EnvValidationError)
+      }, { source: { FLAG: 'maybe' } })).toThrow(EnvValidationError)
     })
 
     it('validates port', () => {
@@ -76,13 +76,13 @@ describe('env-castle', () => {
         PORT: { type: 'port', required: true }
       }, { source: { PORT: '3000' } })
 
-      assert.equal(config.PORT, 3000)
+      expect(config.PORT).toBe(3000)
     })
 
     it('rejects invalid port', () => {
-      assert.throws(() => envSafe({
+      expect(() => envSafe({
         PORT: { type: 'port', required: true }
-      }, { source: { PORT: '99999' } }), EnvValidationError)
+      }, { source: { PORT: '99999' } })).toThrow(EnvValidationError)
     })
 
     it('validates url', () => {
@@ -90,13 +90,13 @@ describe('env-castle', () => {
         API: { type: 'url', required: true }
       }, { source: { API: 'https://api.example.com/v1' } })
 
-      assert.equal(config.API, 'https://api.example.com/v1')
+      expect(config.API).toBe('https://api.example.com/v1')
     })
 
     it('rejects url with wrong protocol', () => {
-      assert.throws(() => envSafe({
+      expect(() => envSafe({
         API: { type: 'url', required: true, protocols: ['https'] }
-      }, { source: { API: 'http://insecure.com' } }), EnvValidationError)
+      }, { source: { API: 'http://insecure.com' } })).toThrow(EnvValidationError)
     })
 
     it('validates email and lowercases it', () => {
@@ -104,7 +104,7 @@ describe('env-castle', () => {
         ADMIN: { type: 'email', required: true }
       }, { source: { ADMIN: 'Admin@Example.COM' } })
 
-      assert.equal(config.ADMIN, 'admin@example.com')
+      expect(config.ADMIN).toBe('admin@example.com')
     })
 
     it('validates json', () => {
@@ -112,7 +112,7 @@ describe('env-castle', () => {
         DATA: { type: 'json', required: true }
       }, { source: { DATA: '{"a":1,"b":[2,3]}' } })
 
-      assert.deepEqual(config.DATA, { a: 1, b: [2, 3] })
+      expect(config.DATA).toEqual({ a: 1, b: [2, 3] })
     })
 
     it('validates list', () => {
@@ -120,7 +120,7 @@ describe('env-castle', () => {
         ORIGINS: { type: 'list', required: true }
       }, { source: { ORIGINS: 'a.com, b.com, c.com' } })
 
-      assert.deepEqual(config.ORIGINS, ['a.com', 'b.com', 'c.com'])
+      expect(config.ORIGINS).toEqual(['a.com', 'b.com', 'c.com'])
     })
 
     it('validates list with custom separator', () => {
@@ -128,7 +128,7 @@ describe('env-castle', () => {
         ITEMS: { type: 'list', required: true, separator: '|' }
       }, { source: { ITEMS: 'one|two|three' } })
 
-      assert.deepEqual(config.ITEMS, ['one', 'two', 'three'])
+      expect(config.ITEMS).toEqual(['one', 'two', 'three'])
     })
 
     it('validates numeric list', () => {
@@ -136,7 +136,7 @@ describe('env-castle', () => {
         IDS: { type: 'list', required: true, itemType: 'number' }
       }, { source: { IDS: '1,2,3' } })
 
-      assert.deepEqual(config.IDS, [1, 2, 3])
+      expect(config.IDS).toEqual([1, 2, 3])
     })
 
     it('validates enum', () => {
@@ -144,13 +144,13 @@ describe('env-castle', () => {
         ENV: { type: 'enum', values: ['dev', 'staging', 'prod'] as const, required: true }
       }, { source: { ENV: 'prod' } })
 
-      assert.equal(config.ENV, 'prod')
+      expect(config.ENV, 'prod')
     })
 
     it('rejects invalid enum', () => {
-      assert.throws(() => envSafe({
+      expect(() => envSafe({
         ENV: { type: 'enum', values: ['dev', 'staging', 'prod'] as const, required: true }
-      }, { source: { ENV: 'test' } }), EnvValidationError)
+      }, { source: { ENV: 'test' } })).toThrow(EnvValidationError)
     })
 
     it('validates duration', () => {
@@ -158,7 +158,7 @@ describe('env-castle', () => {
         TIMEOUT: { type: 'duration', required: true }
       }, { source: { TIMEOUT: '30s' } })
 
-      assert.equal(config.TIMEOUT, 30000)
+      expect(config.TIMEOUT).toBe(30000)
     })
 
     it('validates all duration units', () => {
@@ -175,14 +175,15 @@ describe('env-castle', () => {
         const config = envSafe({
           T: { type: 'duration', required: true }
         }, { source: { T: input } })
-        assert.equal(config.T, expected, `"${input}" should be ${expected}ms`)
+
+        expect(config.T).toBe(expected)
       }
     })
 
     it('rejects duration out of range', () => {
-      assert.throws(() => envSafe({
+      expect(() => envSafe({
         TIMEOUT: { type: 'duration', required: true, min: '1m', max: '1h' }
-      }, { source: { TIMEOUT: '5s' } }), EnvValidationError)
+      }, { source: { TIMEOUT: '5s' } })).toThrow(EnvValidationError)
     })
 
     it('validates IPv4', () => {
@@ -190,7 +191,7 @@ describe('env-castle', () => {
         HOST: { type: 'ip', version: 4, required: true }
       }, { source: { HOST: '192.168.1.1' } })
 
-      assert.equal(config.HOST, '192.168.1.1')
+      expect(config.HOST).toBe('192.168.1.1')
     })
 
     it('validates path', () => {
@@ -198,7 +199,7 @@ describe('env-castle', () => {
         LOG_DIR: { type: 'path', required: true }
       }, { source: { LOG_DIR: '/var/log' } })
 
-      assert.equal(config.LOG_DIR, '/var/log')
+      expect(config.LOG_DIR).toBe('/var/log')
     })
 
     it('validates regex pattern', () => {
@@ -206,7 +207,7 @@ describe('env-castle', () => {
         CODE: { type: 'regex', required: true, pattern: /^[A-Z]{3}-\d{3}$/ }
       }, { source: { CODE: 'ABC-123' } })
 
-      assert.equal(config.CODE, 'ABC-123')
+      expect(config.CODE).toBe('ABC-123')
     })
   })
 
@@ -217,8 +218,8 @@ describe('env-castle', () => {
         DEBUG: { type: 'boolean', default: false },
       }, { source: {} })
 
-      assert.equal(config.PORT, 3000)
-      assert.equal(config.DEBUG, false)
+      expect(config.PORT).toBe(3000)
+      expect(config.DEBUG).toBe(false)
     })
 
     it('prefers provided value over default', () => {
@@ -226,7 +227,7 @@ describe('env-castle', () => {
         PORT: { type: 'port', default: 3000 },
       }, { source: { PORT: '8080' } })
 
-      assert.equal(config.PORT, 8080)
+      expect(config.PORT).toBe(8080)
     })
 
     it('converts default duration to ms', () => {
@@ -234,15 +235,15 @@ describe('env-castle', () => {
         TIMEOUT: { type: 'duration', default: '30s' },
       }, { source: {} })
 
-      assert.equal(config.TIMEOUT, 30000)
+      expect(config.TIMEOUT).toBe(30000)
     })
   })
 
   describe('required', () => {
     it('fails on missing required var', () => {
-      assert.throws(() => envSafe({
+      expect(() => envSafe({
         SECRET: { type: 'string', required: true }
-      }, { source: {} }), EnvValidationError)
+      }, { source: {} })).toThrow(EnvValidationError)
     })
 
     it('collects ALL errors at once', () => {
@@ -252,25 +253,26 @@ describe('env-castle', () => {
           B: { type: 'number', required: true },
           C: { type: 'url', required: true },
         }, { source: {} })
-        assert.fail('Should have thrown')
+
+        throw new Error('Should have thrown')
       } catch (err: any) {
-        assert.ok(err instanceof EnvValidationError)
-        assert.equal(err.errors.length, 3)
+        expect(err).toBeInstanceOf(EnvValidationError)
+        expect(err.errors.length).toBe(3)
       }
     })
   })
 
   describe('number constraints', () => {
     it('validates min', () => {
-      assert.throws(() => envSafe({
+      expect(() => envSafe({
         WORKERS: { type: 'integer', required: true, min: 1, max: 16 }
-      }, { source: { WORKERS: '0' } }), EnvValidationError)
+      }, { source: { WORKERS: '0' } })).toThrow(EnvValidationError)
     })
 
     it('validates max', () => {
-      assert.throws(() => envSafe({
+      expect(() => envSafe({
         WORKERS: { type: 'integer', required: true, min: 1, max: 16 }
-      }, { source: { WORKERS: '32' } }), EnvValidationError)
+      }, { source: { WORKERS: '32' } })).toThrow(EnvValidationError)
     })
 
     it('passes valid range', () => {
@@ -278,15 +280,15 @@ describe('env-castle', () => {
         WORKERS: { type: 'integer', required: true, min: 1, max: 16 }
       }, { source: { WORKERS: '4' } })
 
-      assert.equal(config.WORKERS, 4)
+      expect(config.WORKERS).toBe(4)
     })
   })
 
   describe('string constraints', () => {
     it('validates minLength', () => {
-      assert.throws(() => envSafe({
+      expect(() => envSafe({
         TOKEN: { type: 'string', required: true, minLength: 10 }
-      }, { source: { TOKEN: 'abc' } }), EnvValidationError)
+      }, { source: { TOKEN: 'abc' } })).toThrow(EnvValidationError)
     })
 
     it('validates pattern', () => {
@@ -294,7 +296,7 @@ describe('env-castle', () => {
         CODE: { type: 'string', required: true, pattern: /^[A-Z]{3}-\d{3}$/ }
       }, { source: { CODE: 'ABC-123' } })
 
-      assert.equal(config.CODE, 'ABC-123')
+      expect(config.CODE).toBe('ABC-123')
     })
   })
 
@@ -312,28 +314,29 @@ describe('env-castle', () => {
         }
       })
 
-      assert.equal(config.HOST, 'prod-db.example.com')
-      assert.equal(config.PORT, 5433)
-      assert.equal(config.NAME, 'myapp')
+      expect(config.HOST).toBe('prod-db.example.com')
+      expect(config.PORT).toBe(5433)
+      expect(config.NAME).toBe('myapp')
     })
   })
 
   describe('envVar (single)', () => {
     it('validates and returns value', () => {
       const port = envVar('PORT', { type: 'port', default: 3000 }, { PORT: '8080' })
-      assert.equal(port, 8080)
+
+      expect(port).toBe(8080)
     })
 
     it('uses default', () => {
       const port = envVar('PORT', { type: 'port', default: 3000 }, {})
-      assert.equal(port, 3000)
+
+      expect(port).toBe(3000)
     })
 
     it('throws on missing required', () => {
-      assert.throws(() =>
+      expect(() =>
         envVar('PORT', { type: 'port', required: true }, {}),
-        EnvValidationError
-      )
+      ).toThrow(EnvValidationError)
     })
   })
 
@@ -343,7 +346,9 @@ describe('env-castle', () => {
         PORT: { type: 'port', default: 3000 }
       }, { source: {} })
 
-      assert.throws(() => { (config as any).PORT = 9999 })
+      expect(() => {
+        (config as any).PORT = 9999
+      }).toThrow()
     })
   })
 })
