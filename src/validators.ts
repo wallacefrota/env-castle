@@ -88,20 +88,48 @@ function validateString(key: string, raw: string, rule: Rule & { type: 'string' 
   return [value, null]
 }
 
-function validateNumber(key: string, raw: string, rule: Rule & { type: 'number' | 'integer' | 'float' }): [any, EnvError | null] {
-  const value = rule.type === 'integer' ? parseInt(raw, 10) : parseFloat(raw)
+function validateNumber(
+  key: string,
+  raw: string,
+  rule: Rule & { type: 'number' | 'integer' | 'float' }
+): [any, EnvError | null] {
+
+  const value = parseFloat(raw)
 
   if (isNaN(value)) {
-    return [undefined, { key, message: `"${raw}" is not a valid ${rule.type}`, value: raw, rule }]
+    return [undefined, {
+      key,
+      message: `"${raw}" is not a valid ${rule.type}`,
+      value: raw,
+      rule,
+    }]
   }
+
   if (rule.type === 'integer' && !Number.isInteger(value)) {
-    return [undefined, { key, message: `"${raw}" is not an integer`, value: raw, rule }]
+    return [undefined, {
+      key,
+      message: `"${raw}" is not an integer`,
+      value: raw,
+      rule,
+    }]
   }
+
   if (rule.min !== undefined && value < rule.min) {
-    return [undefined, { key, message: `must be >= ${rule.min} (got ${value})`, value: raw, rule }]
+    return [undefined, {
+      key,
+      message: `must be >= ${rule.min} (got ${value})`,
+      value: raw,
+      rule,
+    }]
   }
+
   if (rule.max !== undefined && value > rule.max) {
-    return [undefined, { key, message: `must be <= ${rule.max} (got ${value})`, value: raw, rule }]
+    return [undefined, {
+      key,
+      message: `must be <= ${rule.max} (got ${value})`,
+      value: raw,
+      rule,
+    }]
   }
 
   return [value, null]
