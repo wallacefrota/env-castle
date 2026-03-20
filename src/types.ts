@@ -126,7 +126,7 @@ export type Rule =
 
 export type Schema = Record<string, Rule>
 
-// ===== INFERÊNCIA DE TIPOS =====
+// ===== INFERENCE OF TYPES =====
 
 type InferRule<R extends Rule> =
   R extends BooleanRule ? boolean :
