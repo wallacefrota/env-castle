@@ -1,6 +1,6 @@
 {
   "name": "env-castle",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Bulletproof environment variable validation with perfect TypeScript inference, beautiful errors, and zero dependencies.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
