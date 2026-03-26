@@ -162,6 +162,31 @@ export function envVar<R extends import('./types').Rule>(
   return value
 }
 
+/**
+ * Just loads .env file(s) into process.env — no validation.
+ *
+ * @example
+ * ```ts
+ * // ESM
+ * import { load } from 'env-castle'
+ * load()
+ *
+ * // CJS
+ * require('env-castle').load()
+ * ```
+ */
+export function load(options: {
+  path?: string | string[]
+  override?: boolean
+} = {}): void {
+  const {
+    path: envPath = '.env',
+    override = false,
+  } = options
+
+  loadEnvFiles(envPath, override)
+}
+
 // Helper type for single var inference (internal)
 type inferSingle<R extends import('./types').Rule> =
   R extends import('./types').BooleanRule ? boolean :
