@@ -156,6 +156,76 @@ const config = env(
 
 ---
 
+## Load Only (dotenv replacement)
+
+- Just need to load .env into process.env without validation? Use load():
+
+```js
+// ESM
+import { load } from "env-castle";
+load();
+
+// CJS
+require("env-castle").load();
+```
+
+### Drop-in replacement for dotenv:
+
+#### Diff
+
+```js
+-require("dotenv").config() + require("env-castle").load();
+```
+
+### With options:
+
+```js
+// Single file
+load({ path: ".env" });
+
+// Multiple files with override
+load({
+  path: [".env", ".env.production"],
+  override: true,
+});
+```
+
+### Perfect for config files that need env vars but don't need validation — like Sequelize CLI, Knex, or any tool that reads process.env directly:
+
+```js
+// config/database.js (Sequelize CLI)
+const { load } = require("env-castle");
+
+load();
+
+const env = process.env.NODE_ENV || "development";
+
+load({ path: `.env.${env}`, override: true });
+
+const config = {
+  username: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASS,
+  database: process.env.MYSQL_DB,
+  host: process.env.MYSQL_HOST,
+  dialect: process.env.MYSQL_DIALECT || "mysql",
+};
+
+module.exports = {
+  development: config,
+  production: config,
+};
+```
+
+# Works with any CLI tool
+
+```bash
+npx sequelize-cli db:create
+npx sequelize-cli db:migrate
+npx knex migrate:latest
+```
+
+---
+
 # Grouped Variables (Prefix)
 
 ```js
